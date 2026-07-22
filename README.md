@@ -1,4 +1,4 @@
-# 🖤 Black-DoS Lab
+# Black-DoS
 
 <p align="center">
 
