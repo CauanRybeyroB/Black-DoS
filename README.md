@@ -17,7 +17,7 @@
 
 # 📌 Sobre o Projeto
 
-O **Black-DoS Lab** é um projeto voltado para estudos de:
+O **Black-DoS ** é um projeto voltado para estudos de:
 
 🖥️ Redes de computadores  
 🐍 Programação Python  
@@ -102,6 +102,12 @@ Entrar na pasta:
 cd Black-DoS
 ```
 
+##Executar:
+
+```python3 Black-Dos.py
+```
+
+
 ---
 
 # 📦 Dependências
@@ -152,6 +158,7 @@ Este projeto é destinado para:
 ---
 
 # 🤝 Contribuição
+@Cauan.ssx7
 
 Para contribuir:
 
