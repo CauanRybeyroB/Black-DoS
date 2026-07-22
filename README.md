@@ -102,10 +102,9 @@ Entrar na pasta:
 cd Black-DoS
 ```
 
-##Executar:
+Executar:
 
-```python3 Black-Dos.py
-```
+```python3 Black-Dos.py```
 
 
 ---
