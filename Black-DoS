@@ -276,4 +276,4 @@ if __name__ == '__main__':
         print(f"\n\033[91mParado. Pacotes: {attack_stats['packets']}\033[0m")
         if bloqueado:
             print(f"\033[92mIP {meu_ip} liberado!\033[0m")
-        sys.exit(0)
+         sys.exit(0)
