@@ -1,221 +1,159 @@
-# 🖤 Black-DoS
+# 🖤 Black-DoS Lab
 
 <p align="center">
+
 <img src="https://img.shields.io/badge/Python-3.x-blue?style=for-the-badge&logo=python">
-<img src="https://img.shields.io/badge/Linux-Supported-black?style=for-the-badge&logo=linux">
-<img src="https://img.shields.io/badge/Network-Security-red?style=for-the-badge">
+<img src="https://img.shields.io/badge/Git-Version_Control-orange?style=for-the-badge&logo=git">
+<img src="https://img.shields.io/badge/Linux-Compatible-black?style=for-the-badge&logo=linux">
+<img src="https://img.shields.io/badge/Cyber_Security-Lab-red?style=for-the-badge&logo=hackthebox">
+
+</p>
+
+<p align="center">
+<img src="https://github.com/user-attachments/assets/83dfc62e-e85c-48a3-b540-7373680196d8" width="700">
 </p>
 
 ---
 
-# 📖 Sobre o Projeto
+# 📌 Sobre o Projeto
 
-O **Black-DoS Lab** é uma ferramenta educacional criada para estudos de:
+O **Black-DoS Lab** é um projeto voltado para estudos de:
 
-- 🌐 Arquitetura de redes
-- 🔒 Segurança da informação
-- 📊 Análise de tráfego
-- ⚡ Testes de desempenho
-- 🐍 Programação Python aplicada a redes
+🖥️ Redes de computadores  
+🐍 Programação Python  
+🔐 Segurança da informação  
+🌐 Protocolos TCP/IP  
+📊 Análise de desempenho em ambientes controlados  
 
-O projeto demonstra conceitos relacionados a disponibilidade de serviços e como sistemas podem ser avaliados em ambientes controlados.
-
-> ⚠️ Utilize somente em ambientes próprios, máquinas virtuais ou sistemas onde você possui autorização.
+> ⚠️ Utilize somente em ambientes próprios, laboratórios ou sistemas autorizados.
 
 ---
 
-# 🧠 Conceito
+# 🧠 Objetivo
 
-Ataques de negação de serviço (DoS/DDoS) exploram o consumo excessivo de recursos de um serviço, podendo causar indisponibilidade.
+O projeto tem como objetivo auxiliar no aprendizado sobre:
 
-Em segurança defensiva, estudar esses conceitos ajuda profissionais a:
-
-✅ Criar proteções melhores  
-✅ Configurar firewalls  
-✅ Monitorar servidores  
-✅ Identificar comportamentos anormais  
-✅ Melhorar infraestrutura
+- Funcionamento de redes
+- Comunicação entre sistemas
+- Monitoramento de serviços
+- Conceitos de disponibilidade
+- Boas práticas de defesa cibernética
 
 ---
 
 # 📋 Requisitos
 
-Antes de iniciar:
+Antes de começar, tenha instalado:
 
-- Python 3+
-- Git
-- Pip
-- Sistema Linux, Windows ou Termux
-
----
-
-# 📱 Termux
-
-Atualize os pacotes:
-
-```bash
-pkg update -y
-pkg upgrade -y
-```
-
-Instale dependências:
-
-```bash
-pkg install git python -y
-```
-
-Baixe o projeto:
-
-```bash
-git clone https://github.com/CauanRybeyroB/Black-DoS.git
-```
-
-Entre no diretório:
-
-```bash
-cd Black-DoS
-```
-
-Instale bibliotecas:
-
-```bash
-pip install -r requirements.txt
-```
-
-Executar:
-
-```bash
-python3 main.py
-```
+- 🐍 Python 3+
+- 🔧 Git
+- 💻 Linux / Windows / Termux
 
 ---
 
-# 🐧 Linux (Debian / Ubuntu / Kali)
+# 🚀 Instalação
 
-Atualização:
+## 🔄 Atualizar sistema
 
 ```bash
 sudo apt update
 sudo apt upgrade -y
 ```
 
-Instalação:
+---
+
+## 🐍 Instalar Python
 
 ```bash
-sudo apt install git python3 python3-pip -y
+sudo apt install python3 python3-pip -y
 ```
 
-Clone:
+Verificar instalação:
+
+```bash
+python3 --version
+```
+
+---
+
+## 🔧 Instalar Git
+
+```bash
+sudo apt install git -y
+```
+
+Verificar instalação:
+
+```bash
+git --version
+```
+
+---
+
+## 📥 Baixar o projeto
 
 ```bash
 git clone https://github.com/CauanRybeyroB/Black-DoS.git
 ```
 
-Acesse:
+Entrar na pasta:
 
 ```bash
 cd Black-DoS
 ```
 
-Dependências:
+---
+
+# 📦 Dependências
+
+Instale as bibliotecas necessárias:
 
 ```bash
 pip3 install -r requirements.txt
 ```
 
-Executar:
-
-```bash
-python3 main.py
-```
-
 ---
 
-# 🪟 Windows
+# 🖥️ Plataformas
 
-Instale:
+<p align="center">
 
-- Python 3
-- Git
+<img src="https://img.shields.io/badge/Linux-Kali%20%7C%20Ubuntu-black?style=for-the-badge&logo=linux">
 
-Clone:
+<img src="https://img.shields.io/badge/Windows-Supported-blue?style=for-the-badge&logo=windows">
 
-```bash
-git clone https://github.com/CauanRybeyroB/Black-DoS.git
-```
+<img src="https://img.shields.io/badge/Termux-Android-green?style=for-the-badge&logo=android">
 
-Entre na pasta:
-
-```bash
-cd Black-DoS
-```
-
-Instale dependências:
-
-```bash
-pip install -r requirements.txt
-```
-
-Execute:
-
-```bash
-python main.py
-```
-
----
-
-# 🍎 macOS
-
-Instale:
-
-```bash
-brew install python git
-```
-
-Clone:
-
-```bash
-git clone https://github.com/CauanRybeyroB/Black-DoS.git
-```
-
-Execute:
-
-```bash
-python3 main.py
-```
+</p>
 
 ---
 
 # 🛡️ Segurança
 
-Este projeto deve ser utilizado para:
+Este projeto é destinado para:
 
-✔ Laboratórios privados  
-✔ Estudos acadêmicos  
-✔ Testes autorizados  
-✔ Aprendizado de defesa cibernética  
+✅ Estudos  
+✅ Laboratórios privados  
+✅ Aprendizado de redes  
+✅ Testes autorizados  
 
-Não utilize contra:
-
-❌ Redes de terceiros  
-❌ Servidores sem permissão  
-❌ Serviços públicos
+❌ Não utilize contra sistemas sem permissão.
 
 ---
 
 # 🧰 Tecnologias
 
-- Python 🐍
-- Socket Programming
-- TCP/IP
-- Linux
-- Git
+<p align="center">
+
+<img src="https://skillicons.dev/icons?i=python,linux,git">
+
+</p>
 
 ---
 
 # 🤝 Contribuição
 
-Contribuições são bem-vindas.
+Para contribuir:
 
 ```bash
 git add .
@@ -225,14 +163,16 @@ git push
 
 ---
 
-# 📄 Licença
+# ⭐ Créditos
 
-Projeto destinado exclusivamente para fins educacionais.
+Projeto criado para fins educacionais.
+
+**Black-DoS**
 
 ---
 
-# ⭐ Autor
+<p align="center">
 
-Desenvolvido para estudos de:
+⭐ Se este projeto ajudou seus estudos, deixe uma estrela!
 
-Cyber Security • Networking • Python
+</p>
